@@ -4,6 +4,7 @@
 #
 
 import pandas as pd
+import torch
 # Vector DB imports
 import weaviate
 # Hugging Face Imports
@@ -38,7 +39,7 @@ class VectorDB:
 
 
 #
-#       Load Data
+#       Table Data Functions
 #
 # return a List of panda-dataframes each dataframe represents 1 loaded table with data and header 
 def loadTables():
@@ -50,7 +51,28 @@ def loadTables():
         tables.append(table)
     return tables
 
+def preprocess_tables(tables: list):
+    processed = []
+    for table in tables:
+        processed_table = "\n".join([table.to_csv(index=False)])
+        print (processed_table)
+        processed.append(processed_table)
+    return processed
 
-tables=loadTables()
+#
+#   Encoding
+#
+def getEncoder():
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    return SentenceTransformer("deepset/all-mpnet-base-v2-table", device=device)
+
+
+#
+#    -------------  MAIN --------------
+#
+
+tables=preprocess_tables(loadTables())
 print (tables[2])
+
+encoder=getEncoder()
 
