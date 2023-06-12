@@ -3,12 +3,14 @@
 #       Imports
 #
 
-
+import pandas as pd
 # Vector DB imports
 import weaviate
 # Hugging Face Imports
 from sentence_transformers import SentenceTransformer
 from datasets import load_dataset
+
+
 
 #
 #       Configuration
@@ -38,11 +40,17 @@ class VectorDB:
 #
 #       Load Data
 #
+# return a List of panda-dataframes each dataframe represents 1 loaded table with data and header 
+def loadTables():
+    # load the dataset from huggingface datasets hub
+    data = load_dataset("ashraq/ott-qa-20k", split="train")
+    tables = []
+    for doc in data:
+        table = pd.DataFrame(doc["data"], columns=doc["header"])
+        tables.append(table)
+    return tables
 
 
-# load the dataset from huggingface datasets hub
-data = load_dataset("ashraq/ott-qa-20k", split="train")
-print (data)
-
-
+tables=loadTables()
+print (tables[2])
 
