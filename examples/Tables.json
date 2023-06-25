@@ -1,0 +1,8 @@
+{
+    "class" :  "Tables",
+        "properties": [
+               {"name":"name", "dataType":["text"]},
+               {"name":"url", "dataType":["text"]},
+               {"name":"document", "dataType":["text"]}
+        ]         
+}

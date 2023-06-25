@@ -9,7 +9,7 @@ import os
 import json
 from tqdm import tqdm
 from io import StringIO
-from vectordb import VectorDB
+from common.vectordb import VectorDB
 
 # Vector DB imports
 import weaviate
@@ -24,25 +24,11 @@ from datasets import load_dataset
 #       Configuration
 #
 
-#databaseurl=os.getenv("WEAVIATE_URL", "http://localhost:8080")
-#api_key=os.getenv("WEAVIATE_API_KEY","")
-#huggingface_key=os.getenv("HUGGINGFACE_APIKEY")
 reinitDatabase=False
 
 #
 #       Definitions
 #
-
-#class VectorDB:
-#    def __init__(self):
-#        auth=weaviate.AuthApiKey(api_key=api_key) if api_key and not "//localhost" in databaseurl else None
-#        self.client = weaviate.Client(
-#            url=databaseurl, 
-#            auth_client_secret=auth,
-#            additional_headers={
-#                "X-HuggingFace-Api-Key": huggingface_key,
-#            },
-#        )
 
 
 vectorDB=VectorDB()
@@ -88,25 +74,26 @@ def insertdata(tables):
                        properties, "Tables", vector=vec
                   )
 
-def createschema(className):
-
-    if vectorDB.client.schema.exists(className):
-        vectorDB.client.schema.delete_class(className)
-
-    test_schema = {
-        "class" :  className,
-        "properties": [
-             {"name":"name", "dataType":["text"]},
-             {"name":"url", "dataType":["text"]},
-             {"name":"document", "dataType":["text"]}
-
-        ]         
-    }
-
-    vectorDB.client.schema.create_class(test_schema)
+#def createschema(className):
+#
+#    if vectorDB.client.schema.exists(className):
+#        vectorDB.client.schema.delete_class(className)
+#
+#    test_schema = {
+#        "class" :  className,
+#        "properties": [
+#             {"name":"name", "dataType":["text"]},
+#             {"name":"url", "dataType":["text"]},
+#             {"name":"document", "dataType":["text"]}
+#
+#        ]         
+#    }
+#
+#    vectorDB.client.schema.create_class(test_schema)
 
 def initDatabase():
-    createschema("Tables")
+    # createschema("Tables")
+    vectorDB.createSchema("Tables",forceRecreate=reinitDatabase)
     tables=loadTables()
     print (tables[2]["table"])
 
@@ -145,7 +132,7 @@ def executeQuery(query):
     coordinates=response["coordinates"]
     resDataFrame.style.applymap(highlight_cell) # axis=1, subset=[coordinates[0][1]])
     print (resName,"\n",resDataFrame)
-    print ("\n\nthe answer is:",answer)
+    print (f"\n\nquestion :\t {query}\nthe answer is:\t{answer}")
 
 #
 #   output formating

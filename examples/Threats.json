@@ -1,0 +1,7 @@
+{
+    "class" :  "Threats",
+        "properties": [
+               {"name":"rating", "dataType":["text"]},
+               {"name":"timestamp", "dataType":["date"]}
+        ]         
+}
