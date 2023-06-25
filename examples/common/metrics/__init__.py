@@ -1,6 +1,7 @@
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.metrics import confusion_matrix
-
+import seaborn as sns
+import matplotlib as plot
 #
 #       Definitions
 #
@@ -15,7 +16,7 @@ class ConfusiMatrix:
         conf_matrix = confusion_matrix(y_true, y_pred)
 
         # Show confusion matrix
-        ax = plt.subplot()
+        ax = plot.subplot()
         sns.heatmap(conf_matrix, annot=True, ax = ax, cmap='Blues', fmt='g', cbar=False)
 
         # Add labels, title and ticks
