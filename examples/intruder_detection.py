@@ -1,5 +1,6 @@
 
 from common.vectordb import VectorDB
+from common.metrics import ConfusionMatrix
 from tqdm import tqdm
 import pandas as pd
 from collections import defaultdict
@@ -141,10 +142,11 @@ def testDetection(model,filename):
         reader = csv.reader(f, delimiter=",")
         datachunk=[]
         target_ratings=[]
-        chunkSize=20
-        correct=0
-        incorrect=0
-        for i,row in enumerate(tqdm(reader,colour="blue")):
+        chunkSize=100
+        showEvery=5000
+        confusionMatrix=ConfusionMatrix(number_of_classes=2)
+    #    for i,row in enumerate(tqdm(reader,colour="blue",mininterval=2000)):       
+        for i,row in enumerate(reader):
             ## skip header
             if i==0:
                 continue
@@ -157,12 +159,16 @@ def testDetection(model,filename):
                 embeddings=model.predict(tf_backend.constant(datachunk))
                 for vector,target in zip(embeddings, target_ratings):
                     res=vectorDB.searchVector(tableName, ["rating"], vector, ntop=1 )
-                    if (target==res[0]["rating"]):
-                        correct+=1
-                    else:
-                        incorrect+=1
+                    pred_rating=res[0]["rating"]
+                    confusionMatrix.add(target,pred_rating)
+                #    print (target, pred_rating)
                 datachunk=[]
                 target_ratings=[]
+            if i%showEvery==0:
+                print ("\n\n")
+                confusionMatrix.show()  
+        print ("-----------------------------------------------\n\n")    
+        confusionMatrix.show()
     
 
 
