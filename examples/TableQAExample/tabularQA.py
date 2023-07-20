@@ -59,7 +59,7 @@ vectorDB=VectorDB()
 # return a List of panda-dataframes each dataframe represents 1 loaded table with data and header 
 def loadTables():
     # load the dataset from huggingface datasets hub
-    data = load_dataset("ashraq/ott-qa-20k", split="train[:10000]")
+    data = load_dataset("ashraq/ott-qa-20k", split="train[:20000]")
     tables = []
     print (data[2])
     for doc in tqdm(data, colour = 'blue'):
