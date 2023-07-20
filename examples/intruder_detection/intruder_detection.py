@@ -1,4 +1,11 @@
 
+
+#
+#       Imports
+#
+import sys
+sys.path.append('..')
+
 from common.vectordb import VectorDB
 from common.metrics import ConfusionMatrix
 from tqdm import tqdm
@@ -128,10 +135,10 @@ def loadIntoDatabase(data,model):
 
 def dataload():
     if dataClearance:
-        cleanData('data/Thursday-22-02-2018_TrafficForML_CICFlowMeter.csv','data/temp/thursday_clean')
-        cleanData('data/Friday-23-02-2018_TrafficForML_CICFlowMeter.csv','data/temp/friday_clean')
+        cleanData('../data/Thursday-22-02-2018_TrafficForML_CICFlowMeter.csv','data/temp/thursday_clean')
+        cleanData('../data/Friday-23-02-2018_TrafficForML_CICFlowMeter.csv','data/temp/friday_clean')
 #    data = pd.read_csv('data/Friday-23-02-2018_TrafficForML_CICFlowMeter.csv')
-    data = pd.read_csv('data/temp/friday_clean.csv')    
+    data = pd.read_csv('../data/temp/friday_clean.csv')    
     printDataAnalysis(data)
     loadIntoDatabase(data,model)
 
@@ -143,7 +150,7 @@ def testDetection(model,filename):
         datachunk=[]
         target_ratings=[]
         chunkSize=100
-        showEvery=5000
+        showEvery=1000
         confusionMatrix=ConfusionMatrix(number_of_classes=2)
     #    for i,row in enumerate(tqdm(reader,colour="blue",mininterval=2000)):       
         for i,row in enumerate(reader):
@@ -159,11 +166,16 @@ def testDetection(model,filename):
                 embeddings=model.predict(tf_backend.constant(datachunk))
                 for vector,target in zip(embeddings, target_ratings):
                     res=vectorDB.searchVector(tableName, ["rating"], vector, ntop=1 )
-                    pred_rating=res[0]["rating"]
+                    for i in range(1):
+                        pred_rating=res[i]["rating"]
+                        # any attack counts higher then benign rating
+                        if (pred_rating!="Benign"):
+                            print ("real:",target)
+                            break
                     confusionMatrix.add(target,pred_rating)
-                #    print (target, pred_rating)
                 datachunk=[]
                 target_ratings=[]
+            confusionMatrix.show()
             if i%showEvery==0:
                 print ("\n\n")
                 confusionMatrix.show()  
@@ -174,9 +186,9 @@ def testDetection(model,filename):
 
 if __name__ == '__main__':
 
-    model=loadModel("data/model/IDS-02-23-2018.model","dense_1")
+    model=loadModel("../data/model/IDS-02-23-2018.model","dense_1")
     
-    #dataload()
+    dataload()
  
-    testDetection(model,'data/temp/thursday_clean.csv')
+    testDetection(model,'../data/temp/thursday_clean.csv')
    

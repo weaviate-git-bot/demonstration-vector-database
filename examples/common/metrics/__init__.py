@@ -15,7 +15,7 @@ class ConfusionMatrix:
     def __init__(self,number_of_classes=2):
         self.matrix=[ [0]*number_of_classes for i in range(number_of_classes)]
         self.name2Index={}
-        self.headers=[ "" for i in range(number_of_classes)]
+        self.headers=[ f"col{i}" for i in range(number_of_classes)]
         self.lastIndex=0
 
     def _extend(self):

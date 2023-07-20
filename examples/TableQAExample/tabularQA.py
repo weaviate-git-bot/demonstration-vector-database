@@ -1,7 +1,27 @@
 
+##
+#
+#   TableQA Demonstartion using Weaviate
+#
+#
+# getting started
+#
+# please visit Weaviate.io for a free Weaviate cloud database or install weaviate on your local box.
+#
+# please set the following ENV Variables before executing.
+ 
+# WEAVIATE_URL          example: http://localhost:8080
+# WEAVIATE_API_KEY      your database api key if you use Weaviate cloud
+# HUGGINGFACE_APIKEY    not requried
+#
+#
+
+
 #
 #       Imports
 #
+import sys
+sys.path.append('..')
 
 import pandas as pd
 import torch
@@ -24,7 +44,7 @@ from datasets import load_dataset
 #       Configuration
 #
 
-reinitDatabase=False
+reinitDatabase=True
 
 #
 #       Definitions
@@ -74,25 +94,7 @@ def insertdata(tables):
                        properties, "Tables", vector=vec
                   )
 
-#def createschema(className):
-#
-#    if vectorDB.client.schema.exists(className):
-#        vectorDB.client.schema.delete_class(className)
-#
-#    test_schema = {
-#        "class" :  className,
-#        "properties": [
-#             {"name":"name", "dataType":["text"]},
-#             {"name":"url", "dataType":["text"]},
-#             {"name":"document", "dataType":["text"]}
-#
-#        ]         
-#    }
-#
-#    vectorDB.client.schema.create_class(test_schema)
-
 def initDatabase():
-    # createschema("Tables")
     vectorDB.createSchema("Tables",forceRecreate=reinitDatabase)
     tables=loadTables()
     print (tables[2]["table"])
